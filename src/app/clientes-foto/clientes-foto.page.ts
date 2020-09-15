@@ -7,6 +7,10 @@ import { ClienteService } from 'src/service/cliente.service';
 import { Cliente } from 'src/model/cliente';
 import { NavController } from '@ionic/angular';
 import { UtilService } from 'src/service/util.services';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { FilePath } from '@ionic-native/file-path/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @Component({
   selector: 'app-clientes-foto',
@@ -16,81 +20,49 @@ import { UtilService } from 'src/service/util.services';
 export class ClientesFotoPage implements OnInit {
 
   foto: any = null;
-  fotoBlob : any;
-  f : any;
-  cliente : Cliente = new Cliente();
+  fotoBlob: any;
+  f: any;
+  cliente: Cliente = new Cliente();
 
-  constructor(private camera: Camera, 
-    private sn: DomSanitizer, 
-    private fireStorage : AngularFireStorage,
-    private route : ActivatedRoute,
-    private clienteServ : ClienteService,
-    private navCtrl : NavController,
-    private util : UtilService) { }
+  constructor(private camera: Camera,
+    private sn: DomSanitizer,
+    private route: ActivatedRoute,
+    private clienteServ: ClienteService,
+    private navCtrl: NavController) { }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(url=>{
-      
+    this.route.paramMap.subscribe(url => {
+
       let id = url.get('id');
 
-      this.clienteServ.buscaPorId(id).subscribe(data=>{
+      this.clienteServ.buscaPorId(id).subscribe(data => {
         this.cliente = data.payload.data();
         this.cliente.id = id;
         this.tirarFoto();
-      },err =>{
+      }, err => {
         this.navCtrl.navigateRoot(['/clientes']);
       })
 
     });
   }
 
-  tirarFoto(){
-    this.clienteServ.obterFoto.subscribe(data=>{
-      this.foto = data;
+  tirarFoto() {
+    this.clienteServ.obterFotoCamera.subscribe((data: any) => {
+      this.foto = data.changingThisBreaksApplicationSecurity;
+      this.fotoBlob = data.changingThisBreaksApplicationSecurity;
     })
   }
- 
-  enviar(){
-    this.clienteServ.uploadFoto(this.foto, this.cliente.id).subscribe(data=>{
+
+  arquivoFoto() {
+    this.clienteServ.obterFotoFile.subscribe(data=>{
+      this.foto = data;
+    })
+
+  }
+
+  enviar() {
+    this.clienteServ.uploadFoto(this.cliente.id).subscribe(data => {
       this.navCtrl.navigateBack(['/cliente-detalhe', this.cliente.id]);
     });
   }
-/*
-  enviar(){
-    this.fotoBlob = this.util.dataUriToBlob(this.foto.changingThisBreaksApplicationSecurity);
-
-    let urlImage = this.fireStorage.storage.ref().child(`perfil/${this.cliente.id}.jpg`);
-      urlImage.put(this.fotoBlob).then(resp => {
-        this.navCtrl.navigateBack(['/cliente-detalhe', this.cliente.id]);
-    });
-
-  }
-  */
-
 }
-
-
-  /*
-  tirarFoto(){
-
-    this.foto = null;
-
-    const options: CameraOptions = {
-      quality: 100,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE,
-      correctOrientation: true
-    }
-
-    this.camera.getPicture(options).then((imageData) => {
-      this.foto = this.sn.bypassSecurityTrustResourceUrl('data:image/jpeg;base64,' + imageData);
-      this.f = imageData;
-      console.log('----------------');
-      //console.log(this.foto.changingThisBreaksApplicationSecurity);
-      console.log(this.foto);
-     }, (err) => {
-      console.log(err);
-     });
-  }
-*/

@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Dados do Cliente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item *ngIf="imagem">
+    <img [src]="imagem" width="100%">
+  </ion-item>
+  <ion-button expand="full" (click)="foto()">Mudar Foto</ion-button>
+  <form>
+    <ion-item>
+      <ion-label position="floating">Nome</ion-label>
+      <ion-input type="text" value="{{cliente.nome}}" disabled="true"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Endereço</ion-label>
+      <ion-input type="text" value="{{cliente.endereco}}" disabled="true"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input type="text" value="{{cliente.email}}" disabled="true"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Telefone</ion-label>
+      <ion-input type="text" value="{{cliente.telefone}}" disabled="true"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">CPF</ion-label>
+      <ion-input type="text" value="{{cliente.cpf}}" disabled="true"></ion-input>
+    </ion-item>
+
+
+    <ion-button expand="full">Atualizar</ion-button>
+
+  </form>
+</ion-content>
